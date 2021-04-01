@@ -20,18 +20,23 @@ def selectFile():
     file_pathlabel.pack() # adds the label to the window
     return file_path
 
+def data_finder(fp):
+    if fp.lower().endswith(".json"):
+        xyz
+    elif fp.lower().endswith(".csv"):
+        xyz
+    elif fp.lower().endswith(".json-stat"):
+        xyz
+
 label = Label(app, text="Testing testing one, two, three") # creates label
 label.pack() # adds the label to the window
 button = tk.Button(app, text="Select a .csv, .json or .json-text file.", width = 50, command = lambda: file_path == selectFile())
 button.pack()
 
+data = data_finder(file_path)
 
 app.mainloop() # this must go at the end of your window code
 
-print(file_path)
-csv=".csv"
-json = ".json"
-json_stat = ".json-stat"
 
 
 
