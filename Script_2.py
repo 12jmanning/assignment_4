@@ -1,10 +1,13 @@
-import csv, sys
+import tkinter
+import tkMessageBox
+from tkinter import *
 
-filename = 'some.csv'
-with open(filename, 'rb') as f:
-    reader = csv.reader(f)
-    try:
-        for row in reader:
-            print(row)
-    except csv.Error as e:
-        sys.exit('file %s, line %d: %s' % (filename, reader.line_num, e))
+top = tkinter.Tk()
+
+def helloCallBack():
+   tkMessageBox.showinfo( "Hello Python", "Hello World")
+
+B = tkinter.Button(top, text ="Hello", command = helloCallBack)
+
+B.pack()
+top.mainloop()
