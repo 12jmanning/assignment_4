@@ -22,6 +22,8 @@ def selectFile():
     file_pathlabel = Label(app, text=file_path) # creates label
     file_pathlabel.pack() # adds the label to the window
     #print(file_path)
+    data = data_finder(file_path)
+
     return file_path
 
 def data_finder(fp):
@@ -35,6 +37,8 @@ def data_finder(fp):
     elif fp.lower().endswith(".json-stat"):
         x=-1
         data=x
+    data.head()
+    print(list(data.columns.values.tolist()))
     return data
 
 file_path = StringVar()
