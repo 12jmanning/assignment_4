@@ -46,7 +46,7 @@ def data_finder(fp):
     #label_3 = Label(app, text=str(data.head())) # other option
     #label_3.pack()
     label_2 = Label(app, text="The first 5 rows of the dataset are as follows:") # other option
-    label_2.pack()
+    label_2.pack() 
     label_3 = Label(app, text=str(data.iloc[:6,:data.shape[1]])) # other option
     label_3.pack()
     dataSetInfo(data)
