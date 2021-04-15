@@ -23,5 +23,7 @@ Activities = pd.DataFrame(data=Activities)
 print(Activities)
 
 print("next")
-df = pd.merge(Accommodation, Attractions,how='inner', on='AddressRegion')
+#df = pd.merge(Accommodation, Attractions,how='inner', on='AddressRegion')
+
+df = Accommodation.merge(Attractions, on = 'AddressRegion').merge(Activities, on = 'AddressRegion')
 print(df)
