@@ -38,7 +38,7 @@ df = pd.DataFrame({
 ##################### Histogram ########################################
 #fig = px.bar(Accommodation, x="AddressRegion", y="count(pd.groupby(AddressRegion))", color="City", barmode="group")
 county_options = Accommodation["AddressRegion"].unique()
-histogram_df = rbind()
+#histogram_df = rbind()
 fig2 = px.histogram(Accommodation, x ="AddressRegion")
 
 
@@ -65,26 +65,24 @@ app.layout = html.Div(children=[
     dcc.Graph(
         id='example-graph',
         figure=fig2
-    ),
-    dcc.Graph(id='funnel-graph'),
+    )#,
+    #dcc.Graph(id='funnel-graph'),
 ])
 
 @app.callback(
-    dash.dependencies.Output('funnel-graph', 'figure'),
-    [dash.dependencies.Input('Manager', 'value')])
-def update_graph(Manager):
-    if Manager == "All Counties":
-        df_plot = df.copy()
+    dash.dependencies.Output('example-graph', fig2),
+    [dash.dependencies.Input('County', 'value')])
+def update_graph(County):
+    if County == "All Counties":
+        df_plot = Accommodation.copy()
     else:
-        df_plot = df[df['AddressRegion'] == Manager]
+        df_plot = Accommodation[Accommodation['AddressRegion'] == County]
 
     pv = pd.pivot_table(
         df_plot,
-        index=['Name'],
-        columns=["Status"],
-        values=['Quantity'],
-        aggfunc=sum,
-        fill_value=0)
+        index=['AddressRegion'],
+        aggfunc=sum)
+    fig2 = px.histogram(pv)
 
     
 if __name__ == '__main__':
