@@ -108,9 +108,7 @@ app.layout = html.Div(children=[
 
     dcc.Graph(
         id='fig_accommodation',
-        figure=fig_accommodation
     )
-
     # dcc.Graph(id='funnel-graph'),
 ])
 
@@ -122,6 +120,32 @@ gmaps = googlemaps.Client(key=API_key)
 origins = (53.00976, -6.29173)
 destination = (53.34167, -6.25003)
 result = gmaps.distance_matrix(origins, destination, mode='walking')
+
+@app.callback(
+    dash.dependencies.Output("my-dynamic-dropdown", "options"),
+    [dash.dependencies.Input("County", "value")],
+)
+def update_options(search_value):
+    data = Accommodation[Accommodation["AddressRegion"]==search_value]
+    row_names = data["Name"].unique().tolist()
+    lst = [{'label': i, 'value': i} for i in row_names]
+    return lst
+
+@app.callback(
+    dash.dependencies.Output("fig_accommodation", "fig_a"),
+    [dash.dependencies.Input("County", "value")],
+    [dash.dependencies.Input("my-dynamic-dropdown", "search_value")],
+)
+def update_options(search_value,value):
+    if not search_value:
+        raise PreventUpdate
+    if not value:
+        raise PreventUpdate
+    data = Accommodation[Accommodation["AddressRegion"]==value & Accommodation["Name"]==search_value]
+    row_names = data["Name"].unique().tolist()
+    lst = [{'label': i, 'value': i} for i in row_names]
+    return  px.histogram(lst)
+
 # @app.callback(
 #     dash.dependencies.Output('example-graph', fig2),
 #     [dash.dependencies.Input('County', 'value')])
@@ -136,17 +160,6 @@ result = gmaps.distance_matrix(origins, destination, mode='walking')
 #         index=['AddressRegion'],
 #         aggfunc=sum)
 #     fig2 = px.histogram(pv)
-
-@app.callback(
-    dash.dependencies.Output("my-dynamic-dropdown", "options"),
-    [dash.dependencies.Input("County", "value")],
-)
-def update_options(search_value):
-    data = Accommodation[Accommodation["AddressRegion"]==search_value]
-    row_names = data["Name"].unique().tolist()
-    lst = [{'label': i, 'value': i} for i in row_names]
-    return lst
-
 
 
 if __name__ == '__main__':
