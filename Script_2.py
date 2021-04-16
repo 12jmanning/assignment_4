@@ -4,13 +4,11 @@ import tkinter as tk
 import pandas as pd
 from tkinter import filedialog
 from tkinter import *
-import pandas as pd
 import numpy as np
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
 import plotly.express as px
-import pandas as pd
 ########### Python 3.2 #############
 import http.client, urllib.request, urllib.parse, urllib.error, base64
 import json
