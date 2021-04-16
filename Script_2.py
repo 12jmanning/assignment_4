@@ -19,6 +19,6 @@ Accommodation = pd.DataFrame(data=Accommodation)
 Activities = pd.read_csv("Activities.csv")
 Activities = pd.DataFrame(data=Activities)
 
-df = pd.merge(Accommodation, Attractions,how='inner', on='AddressRegion')
+#df = pd.merge(Accommodation, Attractions,how='inner', on='AddressRegion')
 #df = Accommodation.merge(Attractions, on = 'AddressRegion').merge(Activities, on = 'AddressRegion')
-print(df)
+#print(df)

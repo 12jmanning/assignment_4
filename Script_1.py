@@ -39,8 +39,8 @@ def data_finder(fp):
         y = pd.read_csv(fp)
         data = pd.DataFrame(data=y)
     elif fp.lower().endswith(".json-stat"):
-        x=-1
-        data=x
+        z = pd.read_json(fp)
+        data=z
     #data.head()
     #print(list(data.columns.values.tolist()))
     #label_3 = Label(app, text=str(data.head())) # other option
