@@ -24,11 +24,10 @@ Attractions = pd.read_csv("Attractions.csv")
 Attractions = pd.DataFrame(data=Attractions)
 
 Accommodation = pd.read_csv("Accommodation.csv")
-Accommodation = pd.DataFrame(data=Accommodation)
+Accommodation: DataFrame = pd.DataFrame(data=Accommodation)
 
 Activities = pd.read_csv("Activities.csv")
 Activities = pd.DataFrame(data=Activities)
-
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
@@ -43,10 +42,10 @@ df = pd.DataFrame({
 })
 
 ##################### Histogram ########################################
-#fig = px.bar(Accommodation, x="AddressRegion", y="count(pd.groupby(AddressRegion))", color="City", barmode="group")
+# fig = px.bar(Accommodation, x="AddressRegion", y="count(pd.groupby(AddressRegion))", color="City", barmode="group")
 county_options = Accommodation["AddressRegion"].unique()
-#histogram_df = rbind()
-fig2 = px.histogram(Accommodation, x ="AddressRegion")
+# histogram_df = rbind()
+fig2 = px.histogram(Accommodation, x="AddressRegion")
 
 
 # df = pd.merge(Accommodation, Attractions,how='inner', on='AddressRegion')
@@ -104,39 +103,46 @@ app.layout = html.Div(children=[
                 'value': i
             } for i in county_options],
             value='All Counties'),
-        ],
+    ],
         style={'width': '25%',
                'display': 'inline-block'}),
 
     dcc.Graph(
         id='example-graph',
         figure=fig2
-    )#,
-    #dcc.Graph(id='funnel-graph'),
+    ),
+
+    dcc.Graph(
+        id='fig_accommodation',
+        figure=fig_accommodation
+    )
+
+    # dcc.Graph(id='funnel-graph'),
 ])
 
-@app.callback(
-    dash.dependencies.Output('example-graph', fig2),
-    [dash.dependencies.Input('County', 'value')])
-def update_graph(County):
-    if County == "All Counties":
-        df_plot = Accommodation.copy()
-    else:
-        df_plot = Accommodation[Acc['AddressRegion'] == County]
+### DRIVE TIMES
 
-    pv = pd.pivot_table(
-        df_plot,
-        index=['AddressRegion'],
-        aggfunc=sum,
-        fill_value=0)
-    fig2 = px.histogram(pv, x ="AddressRegion")
+# Perform request to use the Google Maps API web service
+API_key = 'AIzaSyB6MeOpXZFeX70bKnZshD3q27KL3GHYqec'  # enter Google Maps API key
+gmaps = googlemaps.Client(key=API_key)
+origins = (53.00976, -6.29173)
+destination = (53.34167, -6.25003)
+result = gmaps.distance_matrix(origins, destination, mode='walking')
+# @app.callback(
+#     dash.dependencies.Output('example-graph', fig2),
+#     [dash.dependencies.Input('County', 'value')])
+# def update_graph(County):
+#     if County == "All Counties":
+#         df_plot = Accommodation.copy()
+#     else:
+#         df_plot = Accommodation[Accommodation['AddressRegion'] == County]
+#
+#     pv = pd.pivot_table(
+#         df_plot,
+#         index=['AddressRegion'],
+#         aggfunc=sum)
+#     fig2 = px.histogram(pv)
 
-    
+
 if __name__ == '__main__':
     app.run_server(debug=True, use_reloader=False)
-
-
-
-#df = pd.merge(Accommodation, Attractions,how='inner', on='AddressRegion')
-#df = Accommodation.merge(Attractions, on = 'AddressRegion').merge(Activities, on = 'AddressRegion')
-#print(df)
