@@ -17,6 +17,7 @@ import json
 import urllib.request
 import googlemaps
 from itertools import tee
+from dash.exceptions import PreventUpdate
 
 from pandas import DataFrame
 
@@ -96,16 +97,9 @@ app.layout = html.Div(children=[
         Dash: A web application framework for Python.
     '''),
     html.Div([
-        dcc.Dropdown(
-            id="County",
-            options=[{
-                'label': i,
-                'value': i
-            } for i in county_options],
-            value='All Counties'),
-    ],
-        style={'width': '25%',
-               'display': 'inline-block'}),
+        dcc.Dropdown(id="County",options=[{'label': i,'value': i} for i in county_options],value='value'),
+        dcc.Dropdown(id="my-dynamic-dropdown"),],
+        style={'width': '25%','display': 'inline-block'}),
 
     dcc.Graph(
         id='example-graph',
@@ -142,6 +136,17 @@ result = gmaps.distance_matrix(origins, destination, mode='walking')
 #         index=['AddressRegion'],
 #         aggfunc=sum)
 #     fig2 = px.histogram(pv)
+
+@app.callback(
+    dash.dependencies.Output("my-dynamic-dropdown", "options"),
+    [dash.dependencies.Input("County", "value")],
+)
+def update_options(search_value):
+    data = Accommodation[Accommodation["AddressRegion"]==search_value]
+    row_names = data["Name"].unique().tolist()
+    lst = [{'label': i, 'value': i} for i in row_names]
+    return lst
+
 
 
 if __name__ == '__main__':
