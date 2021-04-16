@@ -35,8 +35,14 @@ df = pd.DataFrame({
     "City": ["SF", "SF", "SF", "Montreal", "Montreal", "Montreal"]
 })
 
+##################### Histogram ########################################
 #fig = px.bar(Accommodation, x="AddressRegion", y="count(pd.groupby(AddressRegion))", color="City", barmode="group")
+county_options = Accommodation["AddressRegion"].unique()
+histogram_df = rbind()
 fig2 = px.histogram(Accommodation, x ="AddressRegion")
+
+
+
 
 app.layout = html.Div(children=[
     html.H1(children='My First Dash'),
@@ -44,12 +50,41 @@ app.layout = html.Div(children=[
     html.Div(children='''
         Dash: A web application framework for Python.
     '''),
+    html.Div([
+        dcc.Dropdown(
+            id="County",
+            options=[{
+                'label': i,
+                'value': i
+            } for i in county_options],
+            value='All Counties'),
+        ],
+        style={'width': '25%',
+               'display': 'inline-block'}),
 
     dcc.Graph(
         id='example-graph',
         figure=fig2
-    )
+    ),
+    dcc.Graph(id='funnel-graph'),
 ])
+
+@app.callback(
+    dash.dependencies.Output('funnel-graph', 'figure'),
+    [dash.dependencies.Input('Manager', 'value')])
+def update_graph(Manager):
+    if Manager == "All Counties":
+        df_plot = df.copy()
+    else:
+        df_plot = df[df['AddressRegion'] == Manager]
+
+    pv = pd.pivot_table(
+        df_plot,
+        index=['Name'],
+        columns=["Status"],
+        values=['Quantity'],
+        aggfunc=sum,
+        fill_value=0)
 
     
 if __name__ == '__main__':
