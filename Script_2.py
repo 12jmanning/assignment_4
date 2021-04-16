@@ -12,18 +12,13 @@ import json
 
 Attractions = pd.read_csv("Attractions.csv")
 Attractions = pd.DataFrame(data=Attractions)
-print(Attractions)
 
 Accommodation = pd.read_csv("Accommodation.csv")
 Accommodation = pd.DataFrame(data=Accommodation)
-print(Accommodation)
 
 Activities = pd.read_csv("Activities.csv")
 Activities = pd.DataFrame(data=Activities)
-print(Activities)
 
-print("next")
 df = pd.merge(Accommodation, Attractions,how='inner', on='AddressRegion')
-
 #df = Accommodation.merge(Attractions, on = 'AddressRegion').merge(Activities, on = 'AddressRegion')
 print(df)
