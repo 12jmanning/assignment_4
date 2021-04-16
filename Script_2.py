@@ -35,7 +35,8 @@ df = pd.DataFrame({
     "City": ["SF", "SF", "SF", "Montreal", "Montreal", "Montreal"]
 })
 
-fig = px.bar(df, x="Fruit", y="Amount", color="City", barmode="group")
+fig = px.bar(Accommodation, x="AddressRegion", y="count(pd.groupby(AddressRegion))", color="City", barmode="group")
+fig2 = px(x = ~"AddressRegion", type = "histogram")
 
 app.layout = html.Div(children=[
     html.H1(children='My First Dash'),
@@ -46,7 +47,7 @@ app.layout = html.Div(children=[
 
     dcc.Graph(
         id='example-graph',
-        figure=fig
+        figure=fig2
     )
 ])
 
