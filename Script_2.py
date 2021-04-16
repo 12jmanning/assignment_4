@@ -35,8 +35,8 @@ df = pd.DataFrame({
     "City": ["SF", "SF", "SF", "Montreal", "Montreal", "Montreal"]
 })
 
-fig = px.bar(Accommodation, x="AddressRegion", y="count(pd.groupby(AddressRegion))", color="City", barmode="group")
-fig2 = px.histogram(Accommodation, x ="AddressRegion", type = "histogram")
+#fig = px.bar(Accommodation, x="AddressRegion", y="count(pd.groupby(AddressRegion))", color="City", barmode="group")
+fig2 = px.histogram(Accommodation, x ="AddressRegion")
 
 app.layout = html.Div(children=[
     html.H1(children='My First Dash'),
