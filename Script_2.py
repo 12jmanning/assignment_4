@@ -128,6 +128,7 @@ gmaps = googlemaps.Client(key=API_key)
 origins = (53.00976, -6.29173)
 destination = (53.34167, -6.25003)
 result = gmaps.distance_matrix(origins, destination, mode='walking')
+print(result)
 # @app.callback(
 #     dash.dependencies.Output('example-graph', fig2),
 #     [dash.dependencies.Input('County', 'value')])
