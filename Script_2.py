@@ -127,6 +127,16 @@ app.layout = html.Div(children=[
         Dash: A web application framework for Python.
     '''),
     html.Div([
+        html.P("Type:"),
+        dcc.RadioItems(
+            id='Type',
+            options=[{'value': x, 'label': x}
+                     for x in Types],
+            value=Types[0],
+            labelStyle={'display': 'inline-block'}
+        ),
+        dcc.Graph(id="choropleth"), ]),
+    html.Div([
         dcc.Dropdown(id="County", options=[{'label': i, 'value': i} for i in county_options], value='value'),
         dcc.Dropdown(id="my_dynamic_dropdown"), ],
         style={'width': '25%', 'display': 'inline-block'}),
@@ -138,17 +148,8 @@ app.layout = html.Div(children=[
     html.Div([
         dcc.Graph(
             id='example-graph2',
-        )], ),
-    html.Div([
-        html.P("Type:"),
-        dcc.RadioItems(
-            id='Type',
-            options=[{'value': x, 'label': x}
-                     for x in Types],
-            value=Types[0],
-            labelStyle={'display': 'inline-block'}
-        ),
-        dcc.Graph(id="choropleth"), ])
+        )], )
+    
 
 ])
 
