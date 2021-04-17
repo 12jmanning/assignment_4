@@ -127,7 +127,7 @@ app.layout = html.Div(children=[
         Dash: A web application framework for Python.
     '''),
     html.Div([
-        html.P("Type:"),
+        html.P("Please Select one of the buttons below to update the map:"),
         dcc.RadioItems(
             id='Type',
             options=[{'value': x, 'label': x}
@@ -142,6 +142,9 @@ app.layout = html.Div(children=[
             figure=fig2
         ),]),
     html.Div([
+        html.H2(children='Plan your next Trip!'),
+        html.P("Please use the following dropdown lists to select your preferred county, activity, accomodation or attraction."),
+        html.P(""),
         dcc.Dropdown(id="County", options=[{'label': i, 'value': i} for i in county_options], value='value'),
         dcc.Dropdown(id="type_dropdown", options=[{'label': i, 'value': i} for i in Types], value='value'),
         dcc.Dropdown(id="my_dynamic_dropdown"), ],
@@ -167,9 +170,11 @@ result = gmaps.distance_matrix(origins, destination, mode='walking')
 @app.callback(
     dash.dependencies.Output("my_dynamic_dropdown", "options"),
     [dash.dependencies.Input("County", "value")],
+    [dash.dependencies.Input("type_dropdown", "value")],
 )
-def update_options(search_value):
-    data = df[df["AddressRegion"] == search_value]
+def update_options(County,type_dropdown):
+    data = df[df["AddressRegion"] == County]
+    data = data[data["Type"] == type_dropdown]
     row_names = data["Name"].unique().tolist()
     lst = [{'label': i, 'value': i} for i in row_names]
     return lst
@@ -210,7 +215,7 @@ def display_choropleth(Type):
                                         text=county_names,
                                         hoverinfo='all',
                                         marker_line_width=1, marker_opacity=0.75))
-    fig.update_layout(title_text='Update Map',
+    fig.update_layout(title_text='Heatmap for Selected Type:',
                       title_x=0.5, width=700, height=700,
                       mapbox=dict(center=dict(lat=53.425049, lon=-7.944620),
                                   accesstoken=mapboxt,
