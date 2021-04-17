@@ -44,10 +44,6 @@ df = pd.DataFrame({
 
 ##################### Histogram ########################################
 # fig = px.bar(Accommodation, x="AddressRegion", y="count(pd.groupby(AddressRegion))", color="City", barmode="group")
-county_options = Accommodation["AddressRegion"].unique()
-# histogram_df = rbind()
-fig2 = px.histogram(Accommodation, x="AddressRegion")
-
 
 ### MAPS
 def read_geojson(url):
@@ -109,6 +105,11 @@ final = new1.append(Attractions, ignore_index=True)
 df2 = px.data.election()
 df = final
 Types = df.Type.unique()
+
+county_options = df['AddressRegion'].unique()
+# histogram_df = rbind()
+fig2 = px.histogram(Accommodation, x="AddressRegion",color="Type")
+
 app.layout = html.Div(children=[
     html.H1(children='My First Dash'),
 
@@ -156,7 +157,7 @@ result = gmaps.distance_matrix(origins, destination, mode='walking')
     [dash.dependencies.Input("County", "value")],
 )
 def update_options(search_value):
-    data = Accommodation[Accommodation["AddressRegion"]==search_value]
+    data = df[df["AddressRegion"]==search_value]
     row_names = data["Name"].unique().tolist()
     lst = [{'label': i, 'value': i} for i in row_names]
     return lst
@@ -186,7 +187,7 @@ def display_choropleth(Type):
     print(data)
     counts = data['AddressRegion'].value_counts()
     county_names = counts.index.array
-    print(df)
+    print(df['AddressRegion'].unique())
     fig = go.Figure(go.Choroplethmapbox(z=counts,  # This is the data.
                                                   locations=county_names,
                                                   colorscale='blues',
