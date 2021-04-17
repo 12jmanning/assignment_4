@@ -106,7 +106,7 @@ df2 = px.data.election()
 df = final
 Types = df.Type.unique()
 
-county_options = df['AddressRegion'].unique()
+county_options = df['AddressRegion'].unique().tolist()
 # histogram_df = rbind()
 fig2 = px.histogram(Accommodation, x="AddressRegion",color="Type")
 
@@ -156,8 +156,8 @@ result = gmaps.distance_matrix(origins, destination, mode='walking')
     dash.dependencies.Output("my_dynamic_dropdown", "options"),
     [dash.dependencies.Input("County", "value")],
 )
-def update_options(search_value):
-    data = df[df["AddressRegion"]==search_value]
+def update_options(County):
+    data = df[df["AddressRegion"]==County]
     row_names = data["Name"].unique().tolist()
     lst = [{'label': i, 'value': i} for i in row_names]
     return lst
