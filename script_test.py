@@ -101,17 +101,35 @@ app.layout = html.Div([
     Output("choropleth", "figure"),
     [Input("Type", "value")])
 def display_choropleth(Type):
+    mapboxt = open("mapbox_token.txt").read().rstrip()
     data = df[df["Type"]==Type]
+    print(data)
     counts = data['AddressRegion'].value_counts()
     county_names = counts.index.array
-    fig = px.choropleth_mapbox(
-        z=counts, geojson=geojson, color='AddressRegion',
-        locations=county_names, featureidkey="properties.district",
-        center={"lat": 53.425049, "lon": -7.944620}, zoom=9,
-        range_color=[0, 6500])
-    fig.update_layout(
-        margin={"r": 0, "t": 0, "l": 0, "b": 0},
-        mapbox_accesstoken=token)
+    print(counts)
+    fig = go.Figure(go.Choroplethmapbox(z=counts,  # This is the data.
+                                                  locations=county_names,
+                                                  colorscale='blues',
+                                                  colorbar=dict(thickness=20, ticklen=3),
+                                                  geojson=geojson,
+                                                  text=county_names,
+                                                  hoverinfo='all',
+                                                  marker_line_width=1, marker_opacity=0.75))
+    fig.update_layout(title_text='Update Map',
+                                title_x=0.5, width=700, height=700,
+                                mapbox=dict(center=dict(lat=53.425049, lon=-7.944620),
+                                            accesstoken=mapboxt,
+                                            style='basic',
+                                            zoom=5.6,
+                                            ))
+    #fig = px.choropleth_mapbox(
+     #   z=counts, geojson=geojson, color='AddressRegion',
+      #  locations=county_names, featureidkey="properties.district",
+       # center={"lat": 53.425049, "lon": -7.944620}, zoom=9,
+        #range_color=[0, 6500])
+    #fig.update_layout(
+     #   margin={"r": 0, "t": 0, "l": 0, "b": 0},
+      #  mapbox_accesstoken=token)
 
     return fig
 
