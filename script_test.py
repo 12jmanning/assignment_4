@@ -33,6 +33,10 @@ irish_url = 'https://gist.githubusercontent.com/pnewall/9a122c05ba2865c3a58f1500
 
 geojson = read_geojson(irish_url)
 
+#Covid
+covid = pd.read_csv("Covid19CountyStatisticsHPSCIreland.csv")
+covid = pd.DataFrame(data=covid)
+
 ## Attractions DF
 Attractions = pd.read_csv("Attractions.csv")
 Attractions = pd.DataFrame(data=Attractions)
