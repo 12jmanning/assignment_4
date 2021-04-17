@@ -96,6 +96,9 @@ app.layout = html.Div([
     dcc.Graph(id="choropleth"),
 ])
 
+counts = df['AddressRegion'].value_counts()
+county_names = counts.index.array
+
 
 @app.callback(
     Output("choropleth", "figure"),
