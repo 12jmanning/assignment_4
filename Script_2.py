@@ -49,10 +49,6 @@ county_options = Accommodation["AddressRegion"].unique()
 fig2 = px.histogram(Accommodation, x="AddressRegion")
 
 
-# df = pd.merge(Accommodation, Attractions,how='inner', on='AddressRegion')
-# df = Accommodation.merge(Attractions, on = 'AddressRegion').merge(Activities, on = 'AddressRegion')
-# print(df)
-
 ### MAPS
 def read_geojson(url):
     with urllib.request.urlopen(url) as url:
@@ -63,33 +59,56 @@ def read_geojson(url):
 irish_url = 'https://gist.githubusercontent.com/pnewall/9a122c05ba2865c3a58f15008548fbbd/raw' \
             '/5bb4f84d918b871ee0e8b99f60dde976bb711d7c/ireland_counties.geojson '
 
-jdata = read_geojson(irish_url)
+geojson = read_geojson(irish_url)
 
-thelist = jdata['features']
+## Attractions DF
+Attractions = pd.read_csv("Attractions.csv")
+Attractions = pd.DataFrame(data=Attractions)
 
-counts = Accommodation['AddressRegion'].value_counts()
-county_names = counts.index.array
+Attractions.drop("Url", inplace=True, axis=1)
+Attractions.drop('Tags', inplace=True, axis=1)
+Attractions.drop("Longitude", inplace=True, axis=1)
+Attractions.drop('Latitude', inplace=True, axis=1)
+Attractions.drop("AddressLocality", inplace=True, axis=1)
+Attractions.drop('AddressCountry', inplace=True, axis=1)
+Attractions.drop('Telephone', inplace=True, axis=1)
 
-mapboxt = open("mapbox_token.txt").read().rstrip()  # my mapbox_access_token  must be used only for special mapbox style
-print('mapboxt: ', mapboxt)
+Attractions['Type'] = 'Attraction'
 
-fig_accommodation = go.Figure(go.Choroplethmapbox(z=counts,  # This is the data.
-                                                  locations=county_names,
-                                                  colorscale='blues',
-                                                  colorbar=dict(thickness=20, ticklen=3),
-                                                  geojson=jdata,
-                                                  text=county_names,
-                                                  hoverinfo='all',
-                                                  marker_line_width=1, marker_opacity=0.75))
+## Accommodation DF
+Accommodation = pd.read_csv("Accommodation.csv")
+Accommodation = pd.DataFrame(data=Accommodation)
 
-fig_accommodation.update_layout(title_text='Accommodation',
-                                title_x=0.5, width=700, height=700,
-                                mapbox=dict(center=dict(lat=53.425049, lon=-7.944620),
-                                            accesstoken=mapboxt,
-                                            style='basic',
-                                            zoom=5.6,
-                                            ))
+Accommodation.drop("Url", inplace=True, axis=1)
+Accommodation.drop('Tags', inplace=True, axis=1)
+Accommodation.drop("Longitude", inplace=True, axis=1)
+Accommodation.drop('Latitude', inplace=True, axis=1)
+Accommodation.drop("AddressLocality", inplace=True, axis=1)
+Accommodation.drop('AddressCountry', inplace=True, axis=1)
+Accommodation.drop('Telephone', inplace=True, axis=1)
 
+Accommodation['Type'] = 'Accommodation'
+
+## Activities DF
+Activities = pd.read_csv("Activities.csv")
+Activities = pd.DataFrame(data=Activities)
+
+Activities.drop("Url", inplace=True, axis=1)
+Activities.drop('Tags', inplace=True, axis=1)
+Activities.drop("Longitude", inplace=True, axis=1)
+Activities.drop('Latitude', inplace=True, axis=1)
+Activities.drop("AddressLocality", inplace=True, axis=1)
+Activities.drop('AddressCountry', inplace=True, axis=1)
+Activities.drop('Telephone', inplace=True, axis=1)
+
+Activities['Type'] = 'Activities'
+
+## Merging Dataframes
+new1 = Accommodation.append(Activities, ignore_index=True)
+final = new1.append(Attractions, ignore_index=True)
+df2 = px.data.election()
+df = final
+Types = df.Type.unique()
 app.layout = html.Div(children=[
     html.H1(children='My First Dash'),
 
@@ -109,12 +128,18 @@ app.layout = html.Div(children=[
     dcc.Graph(
        id='example-graph2',
     )],),
+    html.Div([
+    html.P("Type:"),
+        dcc.RadioItems(
+            id='Type',
+            options=[{'value': x, 'label': x}
+                    for x in Types],
+            value=Types[0],
+            labelStyle={'display': 'inline-block'}
+        ),
+        dcc.Graph(id="choropleth"),])
 
-    dcc.Graph(
-        id='fig_accommodation',
-        figure=fig_accommodation
-    )
-    # dcc.Graph(id='funnel-graph'),
+
 ])
 
 ### DRIVE TIMES
@@ -152,21 +177,31 @@ def update_options(County,my_dynamic_dropdown):
     fig = px.histogram(data, x="AddressRegion")
     return fig
 
-# @app.callback(
-#     dash.dependencies.Output('example-graph', fig2),
-#     [dash.dependencies.Input('County', 'value')])
-# def update_graph(County):
-#     if County == "All Counties":
-#         df_plot = Accommodation.copy()
-#     else:
-#         df_plot = Accommodation[Accommodation['AddressRegion'] == County]
-#
-#     pv = pd.pivot_table(
-#         df_plot,
-#         index=['AddressRegion'],
-#         aggfunc=sum)
-#     fig2 = px.histogram(pv)
-
-
+@app.callback(
+    dash.dependencies.Output("choropleth", "figure"),
+    [dash.dependencies.Input("Type", "value")])
+def display_choropleth(Type):
+    mapboxt = open("mapbox_token.txt").read().rstrip()
+    data = df[df["Type"]==Type]
+    print(data)
+    counts = data['AddressRegion'].value_counts()
+    county_names = counts.index.array
+    print(df)
+    fig = go.Figure(go.Choroplethmapbox(z=counts,  # This is the data.
+                                                  locations=county_names,
+                                                  colorscale='blues',
+                                                  colorbar=dict(thickness=20, ticklen=3),
+                                                  geojson=geojson,
+                                                  text=county_names,
+                                                  hoverinfo='all',
+                                                  marker_line_width=1, marker_opacity=0.75))
+    fig.update_layout(title_text='Update Map',
+                                title_x=0.5, width=700, height=700,
+                                mapbox=dict(center=dict(lat=53.425049, lon=-7.944620),
+                                            accesstoken=mapboxt,
+                                            style='basic',
+                                            zoom=5.6,
+                                            ))
+    return fig
 if __name__ == '__main__':
     app.run_server(debug=True, use_reloader=False)
