@@ -102,9 +102,11 @@ app.layout = html.Div([
     [Input("Type", "value")])
 def display_choropleth(Type):
     data = df[df["Type"]==Type]
+    counts = data['AddressRegion'].value_counts()
+    county_names = counts.index.array
     fig = px.choropleth_mapbox(
-        data, geojson=geojson, color='AddressRegion',
-        locations="AddressRegion", featureidkey="properties.district",
+        z=counts, geojson=geojson, color='AddressRegion',
+        locations=county_names, featureidkey="properties.district",
         center={"lat": 53.425049, "lon": -7.944620}, zoom=9,
         range_color=[0, 6500])
     fig.update_layout(
