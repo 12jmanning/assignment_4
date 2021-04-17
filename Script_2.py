@@ -137,6 +137,9 @@ app.layout = html.Div(children=[
         ),
         dcc.Graph(id="choropleth"), ]),
     html.Div([
+        html.H2(children='View Breakdown of Activities, Attractions and Accomodation by County!'),
+        html.P("Please use the legend to the right of the graph to select Accomodation, Activities or Attractions."),
+        html.P(""),
         dcc.Graph(
             id='example_graph',
             figure=fig2
