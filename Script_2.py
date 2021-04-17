@@ -105,9 +105,10 @@ app.layout = html.Div(children=[
         id='example-graph',
         figure= fig2
     ),
+    html.Div([
     dcc.Graph(
-        id='example-graph2',
-    ),
+       id='example-graph2',
+    )],),
 
     dcc.Graph(
         id='fig_accommodation',
@@ -136,23 +137,15 @@ def update_options(search_value):
     return lst
 
 @app.callback(
-    dash.dependencies.Output("example-graph2", "fig_3"),
+    dash.dependencies.Output("example-graph2", "figure"),
     [dash.dependencies.Input("County", "value")],
     [dash.dependencies.Input("my-dynamic-dropdown", "search_value")],
 )
 def update_options(search_value,value):
-    if not search_value:
-        raise PreventUpdate
-    if not value:
-        raise PreventUpdate
-    data = Accommodation[Accommodation["AddressRegion"]==value & Accommodation["Name"]==search_value]
+    data = Accommodation[Accommodation["AddressRegion"]==value]# & Accommodation["Name"]==search_value]
     row_names = data["Name"].unique().tolist()
-    lst = [{'label': i, 'value': i} for i in row_names]
-    return  dcc.Graph(
-        id='average_country',
-        figure={
-        'data': [{'x': lst,'type': 'histogram'
-        }]})
+    fig=px.histogram(data, x = "AddressRegion")
+    return  fig
 
 # @app.callback(
 #     dash.dependencies.Output('example-graph', fig2),
