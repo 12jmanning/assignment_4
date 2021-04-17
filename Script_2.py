@@ -98,7 +98,7 @@ app.layout = html.Div(children=[
     '''),
     html.Div([
         dcc.Dropdown(id="County",options=[{'label': i,'value': i} for i in county_options],value='value'),
-        dcc.Dropdown(id="my-dynamic-dropdown"),],
+        dcc.Dropdown(id="my_dynamic_dropdown"),],
         style={'width': '25%','display': 'inline-block'}),
 
     dcc.Graph(
@@ -127,7 +127,7 @@ destination = (53.34167, -6.25003)
 result = gmaps.distance_matrix(origins, destination, mode='walking')
 
 @app.callback(
-    dash.dependencies.Output("my-dynamic-dropdown", "options"),
+    dash.dependencies.Output("my_dynamic_dropdown", "options"),
     [dash.dependencies.Input("County", "value")],
 )
 def update_options(search_value):
@@ -139,13 +139,18 @@ def update_options(search_value):
 @app.callback(
     dash.dependencies.Output("example-graph2", "figure"),
     [dash.dependencies.Input("County", "value")],
-    [dash.dependencies.Input("my-dynamic-dropdown", "search_value")],
+    [dash.dependencies.Input("my_dynamic_dropdown", "value")],
 )
-def update_options(search_value,value):
-    data = Accommodation[Accommodation["AddressRegion"]==value]# & Accommodation["Name"]==search_value]
-    row_names = data["Name"].unique().tolist()
-    fig=px.histogram(data, x = "AddressRegion")
-    return  fig
+def update_options(County,my_dynamic_dropdown):
+    data = Accommodation[Accommodation["AddressRegion"]==County]# & Accommodation["Name"]==my_dynamic_dropdown]
+    data = data[data["Name"]==my_dynamic_dropdown]
+    #print(data)
+    #row_names = data["Name"].unique().tolist()
+    #fig=px.histogram(data, x = "AddressRegion")
+    county_options = Accommodation["AddressRegion"].unique()
+    # histogram_df = rbind()
+    fig = px.histogram(data, x="AddressRegion")
+    return fig
 
 # @app.callback(
 #     dash.dependencies.Output('example-graph', fig2),
