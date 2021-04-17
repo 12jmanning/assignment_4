@@ -118,7 +118,7 @@ Types = df.Type.unique()
 print(Accommodation)
 county_options = df['AddressRegion'].unique()
 # histogram_df = rbind()
-fig2 = px.histogram(Accommodation, x="AddressRegion", color="Type")
+fig2 = px.histogram(df, x="AddressRegion", color="Type")
 
 app.layout = html.Div(children=[
     html.H1(children='My First Dash'),
@@ -137,17 +137,18 @@ app.layout = html.Div(children=[
         ),
         dcc.Graph(id="choropleth"), ]),
     html.Div([
+        dcc.Graph(
+            id='example_graph',
+            figure=fig2
+        ),]),
+    html.Div([
         dcc.Dropdown(id="County", options=[{'label': i, 'value': i} for i in county_options], value='value'),
+        dcc.Dropdown(id="type_dropdown", options=[{'label': i, 'value': i} for i in Types], value='value'),
         dcc.Dropdown(id="my_dynamic_dropdown"), ],
         style={'width': '25%', 'display': 'inline-block'}),
-
-    dcc.Graph(
-        id='example-graph',
-        figure=fig2
-    ),
     html.Div([
         dcc.Graph(
-            id='example-graph2',
+            id='example_graph2',
         )], )
     
 
@@ -175,7 +176,7 @@ def update_options(search_value):
 
 
 @app.callback(
-    dash.dependencies.Output("example-graph2", "figure"),
+    dash.dependencies.Output("example_graph2", "figure"),
     [dash.dependencies.Input("County", "value")],
     [dash.dependencies.Input("my_dynamic_dropdown", "value")],
 )
@@ -217,6 +218,18 @@ def display_choropleth(Type):
                                   zoom=5.6,
                                   ))
     return fig
+
+    #@app.callback(
+    #dash.dependencies.Output("example_graph", "figure"),
+    #[dash.dependencies.Input("Type", "value")],)
+    #def update_options(Type):
+        #data = df[df["Type"] == Type]
+        #counts = data['AddressRegion'].value_counts()
+        #county_names = counts.index.array
+        #row_names = data["Name"].unique().tolist()
+        #county_options = data["AddressRegion"].unique()
+        #fig = px.histogram(data, x="AddressRegion")
+        #return fig
 
 
 if __name__ == '__main__':
