@@ -53,6 +53,10 @@ irish_url = 'https://gist.githubusercontent.com/pnewall/9a122c05ba2865c3a58f1500
 
 geojson = read_geojson(irish_url)
 
+#covid
+covid = pd.read_csv("Covid19CountyStatisticsHPSCIreland.csv")
+covid = pd.DataFrame(data=covid)
+
 ## Attractions DF
 Attractions = pd.read_csv("Attractions.csv")
 Attractions = pd.DataFrame(data=Attractions)
@@ -153,9 +157,12 @@ app.layout = html.Div(children=[
         dcc.Dropdown(id="my_dynamic_dropdown"), ],
         style={'width': '25%', 'display': 'inline-block'}),
     html.Div([
+        html.H2(children='Historical COVID-19 Cases:'),
+        html.P("See historical COVID-19 Cases in the county you have selected."),
+        html.P(""),
         dcc.Graph(
-            id='example_graph2',
-        )], )
+            id='covid_graph',
+        ),])
     
 
 ])
@@ -183,21 +190,21 @@ def update_options(County,type_dropdown):
     return lst
 
 
-@app.callback(
-    dash.dependencies.Output("example_graph2", "figure"),
-    [dash.dependencies.Input("County", "value")],
-    [dash.dependencies.Input("my_dynamic_dropdown", "value")],
-)
-def update_options(County, my_dynamic_dropdown):
-    data = Accommodation[Accommodation["AddressRegion"] == County]  # & Accommodation["Name"]==my_dynamic_dropdown]
-    data = data[data["Name"] == my_dynamic_dropdown]
+#@app.callback(
+#    dash.dependencies.Output("example_graph2", "figure"),
+#    [dash.dependencies.Input("County", "value")],
+#    [dash.dependencies.Input("my_dynamic_dropdown", "value")],
+#)
+#def update_options(County, my_dynamic_dropdown):
+#    data = Accommodation[Accommodation["AddressRegion"] == County]  # & Accommodation["Name"]==my_dynamic_dropdown]
+#    data = data[data["Name"] == my_dynamic_dropdown]
     # print(data)
     # row_names = data["Name"].unique().tolist()
     # fig=px.histogram(data, x = "AddressRegion")
-    county_options = Accommodation["AddressRegion"].unique()
+#    county_options = Accommodation["AddressRegion"].unique()
     # histogram_df = rbind()
-    fig = px.histogram(data, x="AddressRegion")
-    return fig
+#    fig = px.histogram(data, x="AddressRegion")
+#    return fig
 
 
 @app.callback(
@@ -225,6 +232,14 @@ def display_choropleth(Type):
                                   style='basic',
                                   zoom=5.6,
                                   ))
+    return fig
+
+@app.callback(
+    dash.dependencies.Output("covid_graph", "figure"),
+    [dash.dependencies.Input("County", "value")])
+def display_choropleth(County):
+    data = covid[covid["CountyName"]==County]
+    fig = px.bar(data,x="TimeStamp",y = "ConfirmedCovidCases")
     return fig
 
     #@app.callback(

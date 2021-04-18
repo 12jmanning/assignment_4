@@ -36,6 +36,13 @@ geojson = read_geojson(irish_url)
 #Covid
 covid = pd.read_csv("Covid19CountyStatisticsHPSCIreland.csv")
 covid = pd.DataFrame(data=covid)
+data2 = covid[covid["CountyName"]=="Dublin"]
+print(data2)
+fig3 = px.bar(data2,x="TimeStamp",y = "ConfirmedCovidCases")
+#fig3.update_xaxes(
+ #   dtick="M1",
+  #  tickformat="%b\n%Y")
+
 
 ## Attractions DF
 Attractions = pd.read_csv("Attractions.csv")
@@ -98,6 +105,7 @@ app.layout = html.Div([
         labelStyle={'display': 'inline-block'}
     ),
     dcc.Graph(id="choropleth"),
+    dcc.Graph(id="covid_graph",figure = fig3),
 ])
 
 counts = df['AddressRegion'].value_counts()
