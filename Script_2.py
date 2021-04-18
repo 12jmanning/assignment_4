@@ -154,15 +154,14 @@ app.layout = html.Div(children=[
         html.P(""),
         dcc.Dropdown(id="County", options=[{'label': i, 'value': i} for i in county_options], value='value'),
         dcc.Dropdown(id="type_dropdown", options=[{'label': i, 'value': i} for i in Types], value='value'),
-        dcc.Dropdown(id="my_dynamic_dropdown"), ],
+        dcc.Dropdown(id="my_dynamic_dropdown"), 
+        html.P(id="report"),],
         style={'width': '25%', 'display': 'inline-block'}),
     html.Div([
         html.H2(children='Historical COVID-19 Cases:'),
         html.P("See historical COVID-19 Cases in the county you have selected."),
         html.P(""),
-        dcc.Graph(
-            id='covid_graph',
-        ),])
+        dcc.Graph(id='covid_graph',),])
     
 
 ])
@@ -188,24 +187,6 @@ def update_options(County,type_dropdown):
     row_names = data["Name"].unique().tolist()
     lst = [{'label': i, 'value': i} for i in row_names]
     return lst
-
-
-#@app.callback(
-#    dash.dependencies.Output("example_graph2", "figure"),
-#    [dash.dependencies.Input("County", "value")],
-#    [dash.dependencies.Input("my_dynamic_dropdown", "value")],
-#)
-#def update_options(County, my_dynamic_dropdown):
-#    data = Accommodation[Accommodation["AddressRegion"] == County]  # & Accommodation["Name"]==my_dynamic_dropdown]
-#    data = data[data["Name"] == my_dynamic_dropdown]
-    # print(data)
-    # row_names = data["Name"].unique().tolist()
-    # fig=px.histogram(data, x = "AddressRegion")
-#    county_options = Accommodation["AddressRegion"].unique()
-    # histogram_df = rbind()
-#    fig = px.histogram(data, x="AddressRegion")
-#    return fig
-
 
 @app.callback(
     dash.dependencies.Output("choropleth", "figure"),
@@ -242,17 +223,19 @@ def display_choropleth(County):
     fig = px.bar(data,x="TimeStamp",y = "ConfirmedCovidCases")
     return fig
 
-    #@app.callback(
-    #dash.dependencies.Output("example_graph", "figure"),
-    #[dash.dependencies.Input("Type", "value")],)
-    #def update_options(Type):
-        #data = df[df["Type"] == Type]
-        #counts = data['AddressRegion'].value_counts()
-        #county_names = counts.index.array
-        #row_names = data["Name"].unique().tolist()
-        #county_options = data["AddressRegion"].unique()
-        #fig = px.histogram(data, x="AddressRegion")
-        #return fig
+@app.callback(
+    dash.dependencies.Output("report", "value"),
+    [dash.dependencies.Input("County", "value")],
+    [dash.dependencies.Input("type_dropdown", "value")],
+    [dash.dependencies.Input("my_dynamic_dropdown", "value")])
+def display_choropleth(County,type_dropdown,my_dynamic_dropdwon):
+    data = df[df["AddressRegion"]==County]
+    data = data[data["Type"]==type_dropdown]
+    data = data[data["Name"]==my_dynamic_dropdown]
+    separator = ","
+    my_report = separator.join("Name:",str(data["Name"]),"\n","Website:",str(data["Url"]),"\n","Telephone:",str(data["Telephone"]),"\n","County:",str(data["AddressRegion"]),"\n",)
+    print(my_report)
+    return my_report
 
 
 if __name__ == '__main__':
