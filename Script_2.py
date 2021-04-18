@@ -61,13 +61,13 @@ covid = pd.DataFrame(data=covid)
 Attractions = pd.read_csv("Attractions.csv")
 Attractions = pd.DataFrame(data=Attractions)
 
-Attractions.drop("Url", inplace=True, axis=1)
-Attractions.drop('Tags', inplace=True, axis=1)
-Attractions.drop("Longitude", inplace=True, axis=1)
-Attractions.drop('Latitude', inplace=True, axis=1)
-Attractions.drop("AddressLocality", inplace=True, axis=1)
-Attractions.drop('AddressCountry', inplace=True, axis=1)
-Attractions.drop('Telephone', inplace=True, axis=1)
+#Attractions.drop("Url", inplace=True, axis=1)
+#Attractions.drop('Tags', inplace=True, axis=1)
+#Attractions.drop("Longitude", inplace=True, axis=1)
+#Attractions.drop('Latitude', inplace=True, axis=1)
+#Attractions.drop("AddressLocality", inplace=True, axis=1)
+#Attractions.drop('AddressCountry', inplace=True, axis=1)
+#Attractions.drop('Telephone', inplace=True, axis=1)
 
 Attractions['Type'] = 'Attraction'
 
@@ -75,26 +75,26 @@ Attractions['Type'] = 'Attraction'
 Accommodation = pd.read_csv("Accommodation.csv")
 Accommodation = pd.DataFrame(data=Accommodation)
 
-Accommodation.drop("Url", inplace=True, axis=1)
-Accommodation.drop('Tags', inplace=True, axis=1)
-Accommodation.drop("Longitude", inplace=True, axis=1)
-Accommodation.drop('Latitude', inplace=True, axis=1)
-Accommodation.drop("AddressLocality", inplace=True, axis=1)
-Accommodation.drop('AddressCountry', inplace=True, axis=1)
-Accommodation.drop('Telephone', inplace=True, axis=1)
+#Accommodation.drop("Url", inplace=True, axis=1)
+#Accommodation.drop('Tags', inplace=True, axis=1)
+#Accommodation.drop("Longitude", inplace=True, axis=1)
+#Accommodation.drop('Latitude', inplace=True, axis=1)
+#Accommodation.drop("AddressLocality", inplace=True, axis=1)
+#Accommodation.drop('AddressCountry', inplace=True, axis=1)
+#Accommodation.drop('Telephone', inplace=True, axis=1)
 
 Accommodation['Type'] = 'Accommodation'
 ## Activities DF
 Activities = pd.read_csv("Activities.csv")
 Activities = pd.DataFrame(data=Activities)
 
-Activities.drop("Url", inplace=True, axis=1)
-Activities.drop('Tags', inplace=True, axis=1)
-Activities.drop("Longitude", inplace=True, axis=1)
-Activities.drop('Latitude', inplace=True, axis=1)
-Activities.drop("AddressLocality", inplace=True, axis=1)
-Activities.drop('AddressCountry', inplace=True, axis=1)
-Activities.drop('Telephone', inplace=True, axis=1)
+#Activities.drop("Url", inplace=True, axis=1)
+#Activities.drop('Tags', inplace=True, axis=1)
+#Activities.drop("Longitude", inplace=True, axis=1)
+#Activities.drop('Latitude', inplace=True, axis=1)
+#Activities.drop("AddressLocality", inplace=True, axis=1)
+#Activities.drop('AddressCountry', inplace=True, axis=1)
+#Activities.drop('Telephone', inplace=True, axis=1)
 
 Activities['Type'] = 'Activities'
 
@@ -155,7 +155,7 @@ app.layout = html.Div(children=[
         dcc.Dropdown(id="County", options=[{'label': i, 'value': i} for i in county_options], value='value'),
         dcc.Dropdown(id="type_dropdown", options=[{'label': i, 'value': i} for i in Types], value='value'),
         dcc.Dropdown(id="my_dynamic_dropdown"), 
-        html.P(id="report"),],
+        html.Div(id="report", children = ""),],
         style={'width': '25%', 'display': 'inline-block'}),
     html.Div([
         html.H2(children='Historical COVID-19 Cases:'),
@@ -219,23 +219,28 @@ def display_choropleth(Type):
     dash.dependencies.Output("covid_graph", "figure"),
     [dash.dependencies.Input("County", "value")])
 def display_choropleth(County):
-    data = covid[covid["CountyName"]==County]
-    fig = px.bar(data,x="TimeStamp",y = "ConfirmedCovidCases")
-    return fig
+    if County is None:
+        raise PreventUpdate
+    else:
+        data = covid[covid["CountyName"]==County]
+        fig = px.bar(data,x="TimeStamp",y = "ConfirmedCovidCases")
+        return fig
 
 @app.callback(
-    dash.dependencies.Output("report", "value"),
+    dash.dependencies.Output("report", "children"),
     [dash.dependencies.Input("County", "value")],
     [dash.dependencies.Input("type_dropdown", "value")],
     [dash.dependencies.Input("my_dynamic_dropdown", "value")])
-def display_choropleth(County,type_dropdown,my_dynamic_dropdwon):
-    data = df[df["AddressRegion"]==County]
-    data = data[data["Type"]==type_dropdown]
-    data = data[data["Name"]==my_dynamic_dropdown]
-    separator = ","
-    my_report = separator.join("Name:",str(data["Name"]),"\n","Website:",str(data["Url"]),"\n","Telephone:",str(data["Telephone"]),"\n","County:",str(data["AddressRegion"]),"\n",)
-    print(my_report)
-    return my_report
+def display_choropleth(County,type_dropdown,my_dynamic_dropdown):
+    if my_dynamic_dropdown is None:
+        raise PreventUpdate
+    else:
+        data = df[df["AddressRegion"]==County]
+        data = data[data["Type"]==type_dropdown]
+        data = data[data["Name"]==my_dynamic_dropdown]
+        my_report = ("Name: "+data["Name"]+"\n Website: "+data["Url"]+"\n Telephone: "+data["Telephone"]+"\n County: "+data["AddressRegion"]+"\n")
+        print(my_report)
+        return my_report
 
 
 if __name__ == '__main__':
