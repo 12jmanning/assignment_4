@@ -124,12 +124,11 @@ county_options = df['AddressRegion'].unique()
 fig2 = px.histogram(df, x="AddressRegion", color="Type")
 
 app.layout = html.Div(children=[
-    html.H1(children='My First Dash'),
+    html.H1(children='Failte Ireland Dashboard'),
 
-    html.Div(children='''
-        Dash: A web application framework for Python.
-    '''),
+    html.Div(children="Welcome to Failte Ireland's Interactive Dashboard! \n This dashboard incorporates the data of all of Faile Ireland's known accomodation, attractions and activities. \n You will be able to view each of these on the interactive map below. Also using the drop down boxes below, you can plan your next 'staycation'! \n When planning this, you will be provided with the name, website and phone number of your selected value. \n We also provide you with the historical COVID-19 case data for your selected county which will help you make informed decisions regarding your next staycation!"),
     html.Div([
+        html.H2(children='Heatmap for Selected Type:'),
         html.P("Please Select one of the buttons below to update the map:"),
         dcc.RadioItems(
             id='Type',
@@ -203,7 +202,7 @@ def display_choropleth(Type):
                                         text=county_names,
                                         hoverinfo='all',
                                         marker_line_width=1, marker_opacity=0.75))
-    fig.update_layout(title_text='Heatmap for Selected Type:',
+    fig.update_layout(
                       title_x=0.5, width=700, height=700,
                       mapbox=dict(center=dict(lat=53.425049, lon=-7.944620),
                                   accesstoken=mapboxt,
