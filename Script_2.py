@@ -119,7 +119,6 @@ df['AddressRegion'] = df['AddressRegion'].str.capitalize()
 # df.drop(indexNames, inplace=True)
 Types = df.Type.unique()
 
-print(Accommodation)
 county_options = df['AddressRegion'].unique()
 # histogram_df = rbind()
 fig2 = px.histogram(df, x="AddressRegion", color="Type")
@@ -194,10 +193,8 @@ def update_options(County,type_dropdown):
 def display_choropleth(Type):
     mapboxt = open("mapbox_token.txt").read().rstrip()
     data = df[df["Type"] == Type]
-    print(data)
     counts = data['AddressRegion'].value_counts()
     county_names = counts.index.array
-    print(df['AddressRegion'].unique())
     fig = go.Figure(go.Choroplethmapbox(z=counts,  # This is the data.
                                         locations=county_names,
                                         colorscale='blues',
@@ -239,7 +236,6 @@ def display_choropleth(County,type_dropdown,my_dynamic_dropdown):
         data = data[data["Type"]==type_dropdown]
         data = data[data["Name"]==my_dynamic_dropdown]
         my_report = ("Name: "+data["Name"]+"\n Website: "+data["Url"]+"\n Telephone: "+data["Telephone"]+"\n County: "+data["AddressRegion"]+"\n")
-        print(my_report)
         return my_report
 
 
