@@ -126,7 +126,11 @@ fig2 = px.histogram(df, x="AddressRegion", color="Type")
 app.layout = html.Div(children=[
     html.H1(children='Failte Ireland Dashboard'),
 
-    html.Div(children="Welcome to Failte Ireland's Interactive Dashboard! \n This dashboard incorporates the data of all of Faile Ireland's known accomodation, attractions and activities. \n You will be able to view each of these on the interactive map below. Also using the drop down boxes below, you can plan your next 'staycation'! \n When planning this, you will be provided with the name, website and phone number of your selected value. \n We also provide you with the historical COVID-19 case data for your selected county which will help you make informed decisions regarding your next staycation!"),
+    html.Div(children="Welcome to Failte Ireland's Interactive Dashboard!"),
+    html.Div(children="This dashboard incorporates the data of all of Faile Ireland's known accomodation, attractions and activities."),
+    html.Div(children="You will be able to view each of these on the interactive map below. Also using the drop down boxes below, you can plan your next 'staycation'! "),
+    html.Div(children="When planning this, you will be provided with the name, website and phone number of your selected value. "),
+    html.Div(children="We also provide you with the historical COVID-19 case data for your selected county which will help you make informed decisions regarding your next staycation!"),
     html.Div([
         html.H2(children='Heatmap for Selected Type:'),
         html.P("Please Select one of the buttons below to update the map:"),
