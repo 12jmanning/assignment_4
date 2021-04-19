@@ -6,6 +6,7 @@ from tkinter import filedialog
 from tkinter import *
 import numpy as np
 import dash
+from dash.dependencies import Input, Output
 import dash_core_components as dcc
 import dash_html_components as html
 import plotly.express as px
@@ -53,7 +54,7 @@ irish_url = 'https://gist.githubusercontent.com/pnewall/9a122c05ba2865c3a58f1500
 
 geojson = read_geojson(irish_url)
 
-#covid
+# covid
 covid = pd.read_csv("Covid19CountyStatisticsHPSCIreland.csv")
 covid = pd.DataFrame(data=covid)
 
@@ -61,13 +62,13 @@ covid = pd.DataFrame(data=covid)
 Attractions = pd.read_csv("Attractions.csv")
 Attractions = pd.DataFrame(data=Attractions)
 
-#Attractions.drop("Url", inplace=True, axis=1)
-#Attractions.drop('Tags', inplace=True, axis=1)
-#Attractions.drop("Longitude", inplace=True, axis=1)
-#Attractions.drop('Latitude', inplace=True, axis=1)
-#Attractions.drop("AddressLocality", inplace=True, axis=1)
-#Attractions.drop('AddressCountry', inplace=True, axis=1)
-#Attractions.drop('Telephone', inplace=True, axis=1)
+# Attractions.drop("Url", inplace=True, axis=1)
+# Attractions.drop('Tags', inplace=True, axis=1)
+# Attractions.drop("Longitude", inplace=True, axis=1)
+# Attractions.drop('Latitude', inplace=True, axis=1)
+# Attractions.drop("AddressLocality", inplace=True, axis=1)
+# Attractions.drop('AddressCountry', inplace=True, axis=1)
+# Attractions.drop('Telephone', inplace=True, axis=1)
 
 Attractions['Type'] = 'Attraction'
 
@@ -75,26 +76,26 @@ Attractions['Type'] = 'Attraction'
 Accommodation = pd.read_csv("Accommodation.csv")
 Accommodation = pd.DataFrame(data=Accommodation)
 
-#Accommodation.drop("Url", inplace=True, axis=1)
-#Accommodation.drop('Tags', inplace=True, axis=1)
-#Accommodation.drop("Longitude", inplace=True, axis=1)
-#Accommodation.drop('Latitude', inplace=True, axis=1)
-#Accommodation.drop("AddressLocality", inplace=True, axis=1)
-#Accommodation.drop('AddressCountry', inplace=True, axis=1)
-#Accommodation.drop('Telephone', inplace=True, axis=1)
+# Accommodation.drop("Url", inplace=True, axis=1)
+# Accommodation.drop('Tags', inplace=True, axis=1)
+# Accommodation.drop("Longitude", inplace=True, axis=1)
+# Accommodation.drop('Latitude', inplace=True, axis=1)
+# Accommodation.drop("AddressLocality", inplace=True, axis=1)
+# Accommodation.drop('AddressCountry', inplace=True, axis=1)
+# Accommodation.drop('Telephone', inplace=True, axis=1)
 
 Accommodation['Type'] = 'Accommodation'
 ## Activities DF
 Activities = pd.read_csv("Activities.csv")
 Activities = pd.DataFrame(data=Activities)
 
-#Activities.drop("Url", inplace=True, axis=1)
-#Activities.drop('Tags', inplace=True, axis=1)
-#Activities.drop("Longitude", inplace=True, axis=1)
-#Activities.drop('Latitude', inplace=True, axis=1)
-#Activities.drop("AddressLocality", inplace=True, axis=1)
-#Activities.drop('AddressCountry', inplace=True, axis=1)
-#Activities.drop('Telephone', inplace=True, axis=1)
+# Activities.drop("Url", inplace=True, axis=1)
+# Activities.drop('Tags', inplace=True, axis=1)
+# Activities.drop("Longitude", inplace=True, axis=1)
+# Activities.drop('Latitude', inplace=True, axis=1)
+# Activities.drop("AddressLocality", inplace=True, axis=1)
+# Activities.drop('AddressCountry', inplace=True, axis=1)
+# Activities.drop('Telephone', inplace=True, axis=1)
 
 Activities['Type'] = 'Activities'
 
@@ -104,16 +105,15 @@ final = new1.append(Attractions, ignore_index=True)
 df2 = px.data.election()
 df = final
 
-
 nan_value = "nan"
 df.replace("", nan_value, inplace=True)
-df.dropna(subset = ["AddressRegion"], inplace=True)
+df.dropna(subset=["AddressRegion"], inplace=True)
 
 df['AddressRegion'] = df['AddressRegion'].str.capitalize()
 
 # Get indexes where name column has value john
 # indexNames = df[df['AddressRegion'] == 'nan'].index
-#df.dropna(subset = ["AddressRegion"], inplace=True)
+# df.dropna(subset = ["AddressRegion"], inplace=True)
 
 # Delete these row indexes from dataFrame
 # df.drop(indexNames, inplace=True)
@@ -127,10 +127,14 @@ app.layout = html.Div(children=[
     html.H1(children='Failte Ireland Dashboard'),
 
     html.Div(children="Welcome to Failte Ireland's Interactive Dashboard!"),
-    html.Div(children="This dashboard incorporates the data of all of Faile Ireland's known accomodation, attractions and activities."),
-    html.Div(children="You will be able to view each of these on the interactive map below. Also using the drop down boxes below, you can plan your next 'staycation'! "),
-    html.Div(children="When planning this, you will be provided with the name, website and phone number of your selected value. "),
-    html.Div(children="We also provide you with the historical COVID-19 case data for your selected county which will help you make informed decisions regarding your next staycation!"),
+    html.Div(
+        children="This dashboard incorporates the data of all of Faile Ireland's known accomodation, attractions and activities."),
+    html.Div(
+        children="You will be able to view each of these on the interactive map below. Also using the drop down boxes below, you can plan your next 'staycation'! "),
+    html.Div(
+        children="When planning this, you will be provided with the name, website and phone number of your selected value. "),
+    html.Div(
+        children="We also provide you with the historical COVID-19 case data for your selected county which will help you make informed decisions regarding your next staycation!"),
     html.Div([
         html.H2(children='Heatmap for Selected Type:'),
         html.P("Please Select one of the buttons below to update the map:"),
@@ -149,22 +153,27 @@ app.layout = html.Div(children=[
         dcc.Graph(
             id='example_graph',
             figure=fig2
-        ),]),
+        ), ]),
     html.Div([
         html.H2(children='Plan your next Trip!'),
-        html.P("Please use the following dropdown lists to select your preferred county, activity, accomodation or attraction."),
+        html.P(
+            "Please use the following dropdown lists to select your preferred county, activity, accomodation or attraction."),
         html.P(""),
+        html.Div(["Your Address: ",
+                  dcc.Input(id='my-input', value='initial value', type='text')]),
+        html.Br(),
+        html.Div(id='my-output'),
         dcc.Dropdown(id="County", options=[{'label': i, 'value': i} for i in county_options], value='value'),
         dcc.Dropdown(id="type_dropdown", options=[{'label': i, 'value': i} for i in Types], value='value'),
-        dcc.Dropdown(id="my_dynamic_dropdown"), 
-        html.Div(id="report", children = ""),],
+        dcc.Dropdown(id="my_dynamic_dropdown"),
+        html.Div(id="report", children=""), ],
         style={'width': '25%', 'display': 'inline-block'}),
+
     html.Div([
         html.H2(children='Historical COVID-19 Cases:'),
         html.P("See historical COVID-19 Cases in the county you have selected."),
         html.P(""),
-        dcc.Graph(id='covid_graph',),])
-    
+        dcc.Graph(id='covid_graph', ), ])
 
 ])
 
@@ -176,6 +185,7 @@ gmaps = googlemaps.Client(key=API_key)
 origins = (53.00976, -6.29173)
 destination = (53.34167, -6.25003)
 result = gmaps.distance_matrix(origins, destination, mode='walking')
+geocode_result = gmaps.geocode('1600 Amphitheatre Parkway, Mountain View, CA')
 
 
 @app.callback(
@@ -183,12 +193,13 @@ result = gmaps.distance_matrix(origins, destination, mode='walking')
     [dash.dependencies.Input("County", "value")],
     [dash.dependencies.Input("type_dropdown", "value")],
 )
-def update_options(County,type_dropdown):
+def update_options(County, type_dropdown):
     data = df[df["AddressRegion"] == County]
     data = data[data["Type"] == type_dropdown]
     row_names = data["Name"].unique().tolist()
     lst = [{'label': i, 'value': i} for i in row_names]
     return lst
+
 
 @app.callback(
     dash.dependencies.Output("choropleth", "figure"),
@@ -207,13 +218,14 @@ def display_choropleth(Type):
                                         hoverinfo='all',
                                         marker_line_width=1, marker_opacity=0.75))
     fig.update_layout(
-                      title_x=0.5, width=700, height=700,
-                      mapbox=dict(center=dict(lat=53.425049, lon=-7.944620),
-                                  accesstoken=mapboxt,
-                                  style='basic',
-                                  zoom=5.6,
-                                  ))
+        title_x=0.5, width=700, height=700,
+        mapbox=dict(center=dict(lat=53.425049, lon=-7.944620),
+                    accesstoken=mapboxt,
+                    style='basic',
+                    zoom=5.6,
+                    ))
     return fig
+
 
 @app.callback(
     dash.dependencies.Output("covid_graph", "figure"),
@@ -222,24 +234,40 @@ def display_choropleth(County):
     if County is None:
         raise PreventUpdate
     else:
-        data = covid[covid["CountyName"]==County]
-        fig = px.bar(data,x="TimeStamp",y = "ConfirmedCovidCases")
+        data = covid[covid["CountyName"] == County]
+        fig = px.bar(data, x="TimeStamp", y="ConfirmedCovidCases")
         return fig
+
 
 @app.callback(
     dash.dependencies.Output("report", "children"),
     [dash.dependencies.Input("County", "value")],
     [dash.dependencies.Input("type_dropdown", "value")],
     [dash.dependencies.Input("my_dynamic_dropdown", "value")])
-def display_choropleth(County,type_dropdown,my_dynamic_dropdown):
+def display_choropleth(County, type_dropdown, my_dynamic_dropdown):
     if my_dynamic_dropdown is None:
         raise PreventUpdate
     else:
-        data = df[df["AddressRegion"]==County]
-        data = data[data["Type"]==type_dropdown]
-        data = data[data["Name"]==my_dynamic_dropdown]
-        my_report = ("Name: "+data["Name"]+"\n Website: "+data["Url"]+"\n Telephone: "+data["Telephone"]+"\n County: "+data["AddressRegion"]+"\n")
+        data = df[df["AddressRegion"] == County]
+        data = data[data["Type"] == type_dropdown]
+        data = data[data["Name"] == my_dynamic_dropdown]
+
+        my_report = ("Name: " + data["Name"] + "\n Website: " + data["Url"] + "\n Telephone: " + data[
+            "Telephone"] + "\n County: " + data["AddressRegion"] + "\n")
         return my_report
+
+
+@app.callback(Output("output", "children"), [Input("input", "value")])
+def output_text(value):
+    return value
+
+
+@app.callback(
+    Output(component_id='my-output', component_property='children'),
+    Input(component_id='my-input', component_property='value')
+)
+def update_output_div(input_value):
+    return 'Output: {}'.format(input_value)
 
 
 if __name__ == '__main__':
