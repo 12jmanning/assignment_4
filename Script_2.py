@@ -21,6 +21,7 @@ from itertools import tee
 from dash.exceptions import PreventUpdate
 import os
 from pandas import DataFrame
+import requests
 
 url = 'https://failteireland.azure-api.net/opendata-api/v1/accommodation/csv'
 Attractions_new = pd.read_csv('https://failteireland.azure-api.net/opendata-api/v1/accommodation/csv')
@@ -160,9 +161,9 @@ app.layout = html.Div(children=[
             "Please use the following dropdown lists to select your preferred county, activity, accomodation or attraction."),
         html.P(""),
         html.Div(["Your Address: ",
-                  dcc.Input(id='my-input', value='initial value', type='text')]),
+                  dcc.Input(id='my_input', value='initial value', type='text')]),
         html.Br(),
-        html.Div(id='my-output'),
+        html.Div(id='my_output'),
         dcc.Dropdown(id="County", options=[{'label': i, 'value': i} for i in county_options], value='value'),
         dcc.Dropdown(id="type_dropdown", options=[{'label': i, 'value': i} for i in Types], value='value'),
         dcc.Dropdown(id="my_dynamic_dropdown"),
@@ -181,12 +182,22 @@ app.layout = html.Div(children=[
 
 # Perform request to use the Google Maps API web service
 API_key = 'AIzaSyB6MeOpXZFeX70bKnZshD3q27KL3GHYqec'  # enter Google Maps API key
+address = '108 Homefarm Road, Drumcondra Dublin 9'
+geocode_url = "https://maps.googleapis.com/maps/api/geocode/json?address={}".format(address)
+geocode_url = geocode_url + "&key={}".format(API_key)
 gmaps = googlemaps.Client(key=API_key)
-origins = (53.00976, -6.29173)
+results = requests.get(geocode_url)
+#print(results)
+#results = pd.read_json(results)
+results = results.json()
+#print(results)
+origins = (results['results'][0]['geometry']['location']['lat'],results['results'][0]['geometry']['location']['lng'])
+#print(results['results'][0]['geometry']['location'])
+#print(results['results'][0]['geometry']['location']['lat'])
 destination = (53.34167, -6.25003)
-result = gmaps.distance_matrix(origins, destination, mode='walking')
+result = gmaps.distance_matrix(origins, destination, mode='walking')["rows"][0]["elements"][0]["duration"]["text"]
 geocode_result = gmaps.geocode('1600 Amphitheatre Parkway, Mountain View, CA')
-
+print(result)
 
 @app.callback(
     dash.dependencies.Output("my_dynamic_dropdown", "options"),
@@ -263,8 +274,8 @@ def output_text(value):
 
 
 @app.callback(
-    Output(component_id='my-output', component_property='children'),
-    Input(component_id='my-input', component_property='value')
+    Output(component_id='my_output', component_property='children'),
+    Input(component_id='my_input', component_property='value')
 )
 def update_output_div(input_value):
     return 'Output: {}'.format(input_value)
