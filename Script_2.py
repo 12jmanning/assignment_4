@@ -39,67 +39,30 @@ external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
-
-##################### Histogram ########################################
-# fig = px.bar(Accommodation, x="AddressRegion", y="count(pd.groupby(AddressRegion))", color="City", barmode="group")
-
 ### MAPS
 def read_geojson(url):
     with urllib.request.urlopen(url) as url:
         jdata = json.loads(url.read().decode())
     return jdata
-
-
 irish_url = 'https://gist.githubusercontent.com/pnewall/9a122c05ba2865c3a58f15008548fbbd/raw' \
             '/5bb4f84d918b871ee0e8b99f60dde976bb711d7c/ireland_counties.geojson '
-
 geojson = read_geojson(irish_url)
-
 API_key = 'AIzaSyB6MeOpXZFeX70bKnZshD3q27KL3GHYqec'  # enter Google Maps API key
 
-# covid
+# covid DF
 covid = pd.read_csv("Covid19CountyStatisticsHPSCIreland.csv")
 covid = pd.DataFrame(data=covid)
-
 ## Attractions DF
 Attractions = pd.read_csv("Attractions.csv")
 Attractions = pd.DataFrame(data=Attractions)
-
-# Attractions.drop("Url", inplace=True, axis=1)
-# Attractions.drop('Tags', inplace=True, axis=1)
-# Attractions.drop("Longitude", inplace=True, axis=1)
-# Attractions.drop('Latitude', inplace=True, axis=1)
-# Attractions.drop("AddressLocality", inplace=True, axis=1)
-# Attractions.drop('AddressCountry', inplace=True, axis=1)
-# Attractions.drop('Telephone', inplace=True, axis=1)
-
 Attractions['Type'] = 'Attraction'
-
 ## Accommodation DF
 Accommodation = pd.read_csv("Accommodation.csv")
 Accommodation = pd.DataFrame(data=Accommodation)
-
-# Accommodation.drop("Url", inplace=True, axis=1)
-# Accommodation.drop('Tags', inplace=True, axis=1)
-# Accommodation.drop("Longitude", inplace=True, axis=1)
-# Accommodation.drop('Latitude', inplace=True, axis=1)
-# Accommodation.drop("AddressLocality", inplace=True, axis=1)
-# Accommodation.drop('AddressCountry', inplace=True, axis=1)
-# Accommodation.drop('Telephone', inplace=True, axis=1)
-
 Accommodation['Type'] = 'Accommodation'
 ## Activities DF
 Activities = pd.read_csv("Activities.csv")
 Activities = pd.DataFrame(data=Activities)
-
-# Activities.drop("Url", inplace=True, axis=1)
-# Activities.drop('Tags', inplace=True, axis=1)
-# Activities.drop("Longitude", inplace=True, axis=1)
-# Activities.drop('Latitude', inplace=True, axis=1)
-# Activities.drop("AddressLocality", inplace=True, axis=1)
-# Activities.drop('AddressCountry', inplace=True, axis=1)
-# Activities.drop('Telephone', inplace=True, axis=1)
-
 Activities['Type'] = 'Activities'
 
 ## Merging Dataframes
@@ -111,20 +74,11 @@ df = final
 nan_value = "nan"
 df.replace("", nan_value, inplace=True)
 df.dropna(subset=["AddressRegion"], inplace=True)
-
 df['AddressRegion'] = df['AddressRegion'].str.capitalize()
-
-# Get indexes where name column has value john
-# indexNames = df[df['AddressRegion'] == 'nan'].index
-# df.dropna(subset = ["AddressRegion"], inplace=True)
-
-# Delete these row indexes from dataFrame
-# df.drop(indexNames, inplace=True)
 Types = df.Type.unique()
 Modes = ('walking','driving','bicycling')
 
 county_options = df['AddressRegion'].unique()
-# histogram_df = rbind()
 fig2 = px.histogram(df, x="AddressRegion", color="Type")
 
 app.layout = html.Div(children=[
@@ -215,7 +169,6 @@ def update_options(my_input, my_dynamic_dropdown,mode_dropdown):
         results = requests.get(geocode_url)
         results = results.json()
         origins = (results['results'][0]['geometry']['location']['lat'],results['results'][0]['geometry']['location']['lng'])
-        #destination = (53.34167, -6.25003)
         result = gmaps.distance_matrix(origins, destination, mode=mode_dropdown)["rows"][0]["elements"][0]["duration"]["text"]
         result = "Your Expected travel time by "+mode_dropdown+" is "+result
         return result
@@ -287,12 +240,6 @@ def display_choropleth(County, type_dropdown, my_dynamic_dropdown):
         my_report = ("Name: " + data["Name"] + "\n Website: " + data["Url"] + "\n Telephone: " + data[
             "Telephone"] + "\n County: " + data["AddressRegion"] + "\n")
         return my_report
-
-
-#@app.callback(Output("my_output", "children"), [Input("my_input", "value")])
-#def output_text(value):
- #   return value
-
 
 @app.callback(
     Output(component_id='my_output', component_property='children'),
