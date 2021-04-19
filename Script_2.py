@@ -161,7 +161,7 @@ app.layout = html.Div(children=[
     html.Div([
         html.H2(children='Plan your next Trip!'),
         html.P(
-            "Please use the following dropdown lists to select your preferred county, activity, accomodation or attraction."),
+            "Please Enter your address and preferred mode of transportation to find out your expected travel time."),
         html.P(""),
         html.Div(["Your Address: ",
                   dcc.Input(id='my_input', value='initial value', type='text')]),
@@ -170,6 +170,9 @@ app.layout = html.Div(children=[
         dcc.Dropdown(id="mode_dropdown", options=[{'label': i, 'value': i} for i in Modes], value='value'),
         html.Br(),
         html.Div(id='my_output'),
+        html.Br(),
+        html.P(
+            "Please use the following dropdown lists to select your preferred county, activity, accomodation or attraction."),
         dcc.Dropdown(id="County", options=[{'label': i, 'value': i} for i in county_options], value='value'),
         dcc.Dropdown(id="type_dropdown", options=[{'label': i, 'value': i} for i in Types], value='value'),
         dcc.Dropdown(id="my_dynamic_dropdown"),
@@ -178,7 +181,7 @@ app.layout = html.Div(children=[
         style={'width': '25%', 'display': 'inline-block'}),
 
     html.Div([
-        html.H2(children='Historical COVID-19 Cases:'),
+        html.H2(children='Historical Cumulative COVID-19 Cases:'),
         html.P("See historical COVID-19 Cases in the county you have selected."),
         html.P(""),
         dcc.Graph(id='covid_graph', ), ])
