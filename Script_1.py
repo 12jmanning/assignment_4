@@ -6,6 +6,7 @@ import pandas as pd
 from tkinter import filedialog
 from tkinter import *
 import pandas as pd
+import os
 
 
 
@@ -88,7 +89,11 @@ def dataSetInfo(data):
 
 
 def convertToExcel(data):
-    data.to_excel()
+    wd = os.getcwd()
+    print(wd)
+    with pd.ExcelWriter('output.xlsx') as writer:  
+        data.to_excel(writer, sheet_name='Sheet_name_1')
+    #data.to_excel(wd)
 
 
 file_path = StringVar()
