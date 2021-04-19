@@ -55,6 +55,8 @@ irish_url = 'https://gist.githubusercontent.com/pnewall/9a122c05ba2865c3a58f1500
 
 geojson = read_geojson(irish_url)
 
+API_key = 'AIzaSyB6MeOpXZFeX70bKnZshD3q27KL3GHYqec'  # enter Google Maps API key
+
 # covid
 covid = pd.read_csv("Covid19CountyStatisticsHPSCIreland.csv")
 covid = pd.DataFrame(data=covid)
@@ -119,6 +121,7 @@ df['AddressRegion'] = df['AddressRegion'].str.capitalize()
 # Delete these row indexes from dataFrame
 # df.drop(indexNames, inplace=True)
 Types = df.Type.unique()
+Modes = ('walking','driving','bicycling')
 
 county_options = df['AddressRegion'].unique()
 # histogram_df = rbind()
@@ -163,11 +166,15 @@ app.layout = html.Div(children=[
         html.Div(["Your Address: ",
                   dcc.Input(id='my_input', value='initial value', type='text')]),
         html.Br(),
+        html.P("Your Mode of Transport:"),
+        dcc.Dropdown(id="mode_dropdown", options=[{'label': i, 'value': i} for i in Modes], value='value'),
+        html.Br(),
         html.Div(id='my_output'),
         dcc.Dropdown(id="County", options=[{'label': i, 'value': i} for i in county_options], value='value'),
         dcc.Dropdown(id="type_dropdown", options=[{'label': i, 'value': i} for i in Types], value='value'),
         dcc.Dropdown(id="my_dynamic_dropdown"),
-        html.Div(id="report", children=""), ],
+        html.Div(id="report", children=""), 
+        html.Div(id='my_output2', children = "")],
         style={'width': '25%', 'display': 'inline-block'}),
 
     html.Div([
@@ -181,23 +188,34 @@ app.layout = html.Div(children=[
 ### DRIVE TIMES
 
 # Perform request to use the Google Maps API web service
-API_key = 'AIzaSyB6MeOpXZFeX70bKnZshD3q27KL3GHYqec'  # enter Google Maps API key
-address = '108 Homefarm Road, Drumcondra Dublin 9'
-geocode_url = "https://maps.googleapis.com/maps/api/geocode/json?address={}".format(address)
-geocode_url = geocode_url + "&key={}".format(API_key)
-gmaps = googlemaps.Client(key=API_key)
-results = requests.get(geocode_url)
-#print(results)
-#results = pd.read_json(results)
-results = results.json()
-#print(results)
-origins = (results['results'][0]['geometry']['location']['lat'],results['results'][0]['geometry']['location']['lng'])
-#print(results['results'][0]['geometry']['location'])
-#print(results['results'][0]['geometry']['location']['lat'])
-destination = (53.34167, -6.25003)
-result = gmaps.distance_matrix(origins, destination, mode='walking')["rows"][0]["elements"][0]["duration"]["text"]
-geocode_result = gmaps.geocode('1600 Amphitheatre Parkway, Mountain View, CA')
-print(result)
+@app.callback(
+    dash.dependencies.Output("my_output2", "children"),
+    [dash.dependencies.Input("my_input", "value")],
+    [dash.dependencies.Input("my_dynamic_dropdown", "value")],
+    [dash.dependencies.Input("mode_dropdown", "value")],
+)
+def update_options(my_input, my_dynamic_dropdown,mode_dropdown):
+    if my_dynamic_dropdown is None:
+        raise PreventUpdate
+    elif my_input is None:
+        raise PreventUpdate
+    elif mode_dropdown is None:
+        raise PreventUpdate
+    else:
+        origin_data = df[df["Name"] == my_dynamic_dropdown]
+        destination = (origin_data['Latitude'],origin_data['Longitude'])
+        API_key = 'AIzaSyB6MeOpXZFeX70bKnZshD3q27KL3GHYqec'  # enter Google Maps API key
+        address = my_input
+        geocode_url = "https://maps.googleapis.com/maps/api/geocode/json?address={}".format(address)
+        geocode_url = geocode_url + "&key={}".format(API_key)
+        gmaps = googlemaps.Client(key=API_key)
+        results = requests.get(geocode_url)
+        results = results.json()
+        origins = (results['results'][0]['geometry']['location']['lat'],results['results'][0]['geometry']['location']['lng'])
+        #destination = (53.34167, -6.25003)
+        result = gmaps.distance_matrix(origins, destination, mode=mode_dropdown)["rows"][0]["elements"][0]["duration"]["text"]
+        result = "Your Expected travel time by "+mode_dropdown+" is "+result
+        return result
 
 @app.callback(
     dash.dependencies.Output("my_dynamic_dropdown", "options"),
@@ -268,9 +286,9 @@ def display_choropleth(County, type_dropdown, my_dynamic_dropdown):
         return my_report
 
 
-@app.callback(Output("output", "children"), [Input("input", "value")])
-def output_text(value):
-    return value
+#@app.callback(Output("my_output", "children"), [Input("my_input", "value")])
+#def output_text(value):
+ #   return value
 
 
 @app.callback(
