@@ -19,17 +19,21 @@ def selectFile():
     
     X = filedialog.askopenfilename(filetypes=[("Image files", "*.csv; *.json; *.json-stat")])
     #print(X)
-    file_path = X
-    label_1 = Label(app, text="The file's location that you have selected is as follows:") # other option
-    label_1.pack()
-    file_pathlabel = Label(app, text=file_path) # creates label
-    file_pathlabel.pack() # adds the label to the window
-    label_s = Label(app, text="") # other option
-    label_s.pack()
-    #print(file_path)
-    data = data_finder(file_path)
+    if X =="":
+        X=""
+        return file_path
+    else:
+        file_path = X
+        label_1 = Label(app, text="The file's location that you have selected is as follows:") # other option
+        label_1.pack()
+        file_pathlabel = Label(app, text=file_path) # creates label
+        file_pathlabel.pack() # adds the label to the window
+        label_s = Label(app, text="") # other option
+        label_s.pack()
+        #print(file_path)
+        data = data_finder(file_path)
 
-    return file_path
+        return file_path
 
 def data_finder(fp):
     data=-1
