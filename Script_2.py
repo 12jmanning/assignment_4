@@ -33,7 +33,7 @@ Accommodation = pd.read_csv("Accommodation.csv")
 Accommodation: DataFrame = pd.DataFrame(data=Accommodation)
 
 Activities = pd.read_csv("Activities.csv")
-Activities = pd.DataFrame(data=Activities)
+Activities = pd.DataFrame(data=Activities) 
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
