@@ -140,7 +140,8 @@ app.layout = html.Div(children=[
         html.P(""),
         dcc.Graph(id='covid_graph', ), ])
 
-])
+
+], )
 
 ### DRIVE TIMES
 
